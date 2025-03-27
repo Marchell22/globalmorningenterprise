@@ -149,6 +149,7 @@ class TaskScheduler
     public function saveToFile($filename)
     {
         try {
+            $filepath = '../' . $filename;
             $data = [
                 'tasks' => $this->tasks,
                 'dependencies' => $this->dependencies
@@ -175,7 +176,8 @@ class TaskScheduler
     public function loadFromFile($filename)
     {
         try {
-            $fp = @fopen($filename, 'r');
+            $filepath = '../' . $filename;
+            $fp = @fopen($filepath, 'r');
             if ($fp) {
                 $content = '';
                 while (!feof($fp)) {

@@ -51,7 +51,7 @@ foreach ($stats as $priority => $count) {
 
 // Menyimpan ke file
 echo "=== Menyimpan data ke file ===\n";
-if ($scheduler->saveToFile('tasks.json')) {
+if ($scheduler->saveToFile(__DIR__ . '/tasks.json')) {
     echo "Data berhasil disimpan\n";
 } else {
     echo "Gagal menyimpan data\n";
@@ -60,7 +60,7 @@ if ($scheduler->saveToFile('tasks.json')) {
 // Memuat dari file
 echo "=== Memuat data dari file ===\n";
 $newScheduler = new TaskScheduler();
-if ($newScheduler->loadFromFile('tasks.json')) {
+if ($newScheduler->loadFromFile(__DIR__ . '/tasks.json')) {
     echo "Data berhasil dimuat\n";
 } else {
     echo "Gagal memuat data\n";
