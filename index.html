@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Manajemen Konten</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js untuk visualisasi data -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-newspaper"></i>
+                <h2>Content Manager</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="alldata.php"><i class="fas fa-database"></i> Lihat Semua Data</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div class="header-content">
+                    <h1>Dashboard</h1>
+                    <div class="date-filter">
+                        <label for="date-range">Filter Tanggal:</label>
+                        <select id="date-range" onchange="updateDashboard()">
+                            <option value="7">7 Hari Terakhir</option>
+                            <option value="30" selected>30 Hari Terakhir</option>
+                            <option value="90">3 Bulan Terakhir</option>
+                            <option value="180">6 Bulan Terakhir</option>
+                            <option value="365">1 Tahun Terakhir</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Card Performa Artikel -->
+            <section class="card-container">
+                <div class="card card-summary">
+                    <div class="card-header">
+                        <h2>Performa Artikel</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="summary-widgets">
+                            <div class="widget">
+                                <div class="widget-icon bg-blue">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="widget-data">
+                                    <h3>Total Artikel</h3>
+                                    <p id="total-articles">0</p>
+                                </div>
+                            </div>
+                            <div class="widget">
+                                <div class="widget-icon bg-green">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="widget-data">
+                                    <h3>Published</h3>
+                                    <p id="published-articles">0</p>
+                                </div>
+                            </div>
+                            <div class="widget">
+                                <div class="widget-icon bg-orange">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </div>
+                                <div class="widget-data">
+                                    <h3>Draft</h3>
+                                    <p id="draft-articles">0</p>
+                                </div>
+                            </div>
+                            <div class="widget">
+                                <div class="widget-icon bg-gray">
+                                    <i class="fas fa-archive"></i>
+                                </div>
+                                <div class="widget-data">
+                                    <h3>Archived</h3>
+                                    <p id="archived-articles">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="monthly-publish-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Panel Aktivitas Author -->
+            <section class="card-container">
+                <div class="card card-author">
+                    <div class="card-header">
+                        <h2>Aktivitas Author</h2>
+                    </div>
+                    <div class="card-content author-activity">
+                        <div class="author-tabs">
+                            <button class="tab-btn active" data-tab="top-articles">Top by Articles</button>
+                            <button class="tab-btn" data-tab="top-views">Top by Views</button>
+                            <button class="tab-btn" data-tab="contribution-trend">Contribution Trend</button>
+                        </div>
+
+                        <div id="top-articles" class="tab-content active">
+                            <table class="author-table">
+                                <thead>
+                                    <tr>
+                                        <th>Author</th>
+                                        <th>Artikel</th>
+                                        <th>Rata-rata View</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-authors-by-articles">
+                                    <!-- Data dinamis akan diisi oleh JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="top-views" class="tab-content">
+                            <table class="author-table">
+                                <thead>
+                                    <tr>
+                                        <th>Author</th>
+                                        <th>Total Views</th>
+                                        <th>Artikel</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-authors-by-views">
+                                    <!-- Data dinamis akan diisi oleh JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="contribution-trend" class="tab-content">
+                            <div class="chart-container">
+                                <canvas id="author-contribution-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Komponen Analisa Konten -->
+            <section class="card-container two-column">
+                <div class="card card-content-analysis">
+                    <div class="card-header">
+                        <h2>Analisa Konten</h2>
+                    </div>
+                    <div class="card-content content-analysis">
+                        <div class="chart-container">
+                            <canvas id="category-pie-chart"></canvas>
+                        </div>
+                        <div class="statistic-container">
+                            <div class="statistic-card">
+                                <h3>Rata-rata Komentar</h3>
+                                <p id="avg-comments">0</p>
+                            </div>
+                            <div class="statistic-card">
+                                <h3>Top 5 Artikel dengan Komentar Terbanyak</h3>
+                                <ul id="top-commented-articles">
+                                    <!-- Data dinamis akan diisi oleh JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-popular">
+                    <div class="card-header">
+                        <h2>Artikel Populer</h2>
+                    </div>
+                    <div class="card-content">
+                        <table class="popular-articles-table">
+                            <thead>
+                                <tr>
+                                    <th>Judul</th>
+                                    <th>Views</th>
+                                    <th>Kategori</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top-viewed-articles">
+                                <!-- Data dinamis akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

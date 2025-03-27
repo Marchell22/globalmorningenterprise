@@ -1,0 +1,37 @@
+{
+    "tasks": {
+        "task1": {
+            "id": "task1",
+            "description": "Task prioritas tinggi",
+            "priority": 1,
+            "scheduledTime": 1743044606,
+            "completed": false
+        },
+        "task2": {
+            "id": "task2",
+            "description": "Task prioritas sedang",
+            "priority": 3,
+            "scheduledTime": 1743044666,
+            "completed": false
+        },
+        "task3": {
+            "id": "task3",
+            "description": "Task prioritas rendah",
+            "priority": 5,
+            "scheduledTime": 1743044546,
+            "completed": false
+        },
+        "task4": {
+            "id": "task4",
+            "description": "Task prioritas tinggi tapi dijadwalkan nanti",
+            "priority": 1,
+            "scheduledTime": 1743044846,
+            "completed": false
+        }
+    },
+    "dependencies": {
+        "task2": [
+            "task1"
+        ]
+    }
+}

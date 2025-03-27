@@ -1,0 +1,95 @@
+1. Analisa Database:
+a. Tidak ada PRIMARY KEY yang didefinisikan untuk semua tabel
+b. Tidak ada FOREIGN KEY CONSTRAINTS untuk relasi antar tabel
+c. Field created dan modified seharusnya menggunakan tipe data DATETIME, bukan VARCHAR
+d. Field parent_category seharusnya berupa INT yang merujuk ke category_id, bukan VARCHAR
+e. Tidak ada UNIQUE constraint untuk username pada tabel users
+f. Tidak ada field untuk timestamp pembuatan komentar yang tepat (VARCHAR bukan DATETIME)
+
+User Table
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    user_info TEXT,
+    role VARCHAR(50) DEFAULT 'user',
+    last_login DATETIME,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+Articles Table
+CREATE TABLE articles (
+    article_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    content LONGTEXT,
+    author_id INT NOT NULL,
+    status VARCHAR(50) DEFAULT 'draft',
+    category_id INT,
+    tags TEXT,
+    views INT DEFAULT 0,
+    likes INT DEFAULT 0,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
+);
+
+Comment Tables
+CREATE TABLE comments (
+    comment_id INT AUTO_INCREMENT PRIMARY KEY,
+    article_id INT NOT NULL,
+    user_id INT,
+    name VARCHAR(255),
+    email VARCHAR(255),
+    comment TEXT NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_approved TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+Media Table
+CREATE TABLE media (
+    media_id INT AUTO_INCREMENT PRIMARY KEY,
+    filename TEXT NOT NULL,
+    path TEXT NOT NULL,
+    type VARCHAR(50),
+    size INT,
+    article_id INT,
+    uploaded DATETIME DEFAULT CURRENT_TIMESTAMP,
+    uploader_id INT,
+    FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE,
+    FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+Categories Table
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    user_info TEXT,
+    role VARCHAR(50) DEFAULT 'user',
+    last_login DATETIME,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+2.
+SELECT 
+    articles.article_id,
+    articles.title,
+    articles.status,
+    (SELECT username FROM users WHERE users.user_id = articles.author_id) AS author,
+    articles.created AS creation_date,
+    (SELECT COUNT(*) FROM media WHERE media.article_id = articles.article_id) AS media_count,
+    (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count,
+    articles.views AS view_count
+FROM 
+    articles
+ORDER BY 
+    articles.views DESC;
